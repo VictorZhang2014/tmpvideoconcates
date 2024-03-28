@@ -1,0 +1,147 @@
+<style>
+</style>
+
+<main class="main">
+  <div class="content">
+    
+
+
+    <ng-template [ngIf]="isMergedPage">
+        <div>
+          Welcome back, friend.
+        </div>
+    </ng-template>
+
+
+
+
+    <ng-template [ngIf]="httpErrMsg && httpErrMsg.length > 0">
+        <div class="p-4 mb-4 text-sm text-red-800 rounded-lg bg-red-50 dark:bg-gray-800 dark:text-red-400" role="alert">
+            <span class="font-medium">警告：</span> {{httpErrMsg}}
+        </div>
+    </ng-template>
+
+
+    <ng-template [ngIf]="progressModels.length > 0">
+        <div class="flex items-center p-4 mb-4 text-sm text-yellow-800 rounded-lg bg-yellow-50 dark:bg-gray-800 dark:text-yellow-300" role="alert">
+            <svg class="flex-shrink-0 inline w-4 h-4 me-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
+            <path d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5ZM9.5 4a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3ZM12 15H8a1 1 0 0 1 0-2h1v-3H8a1 1 0 0 1 0-2h2a1 1 0 0 1 1 1v4h1a1 1 0 0 1 0 2Z"/>
+            </svg>
+            <span class="sr-only">Info</span>
+            <div>
+            <span class="font-medium">当前处理进度：</span> 
+                <table style="border: 1px solid black;">
+                    <thead>
+                        <td style="border: 1px solid black;">文件名</td>
+                        <td style="border: 1px solid black;">状态</td>
+                        <td style="border: 1px solid black;">大小</td>
+                        <td style="border: 1px solid black;">时间帧</td>
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let p of progressModels" style="border: 1px solid black;"> 
+                            <td style="border: 1px solid black;">{{p.name}}</td>
+                            <td style="border: 1px solid black;">{{p.status}}</td>
+                            <td style="border: 1px solid black;">{{p.targetsize}}MB</td>
+                            <td style="border: 1px solid black;">{{p.timemark}}</td>
+                        </tr>
+                    </tbody>
+                </table> 
+            </div>
+        </div>
+    </ng-template>
+
+
+
+    <ng-template [ngIf]="!isMergedPage">
+    
+    <div class="relative overflow-x-auto shadow-md sm:rounded-lg">
+        <h2 class="text-4xl font-extrabold dark:text-white">视频文件夹</h2> 
+        <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
+            <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+                <tr> 
+                    <th scope="col" class="px-6 py-3">
+                        视频文件夹
+                    </th>
+                    <th scope="col" class="px-6 py-3">
+                        创建时间
+                    </th> 
+                    <th scope="col" class="px-6 py-3">
+                        操作
+                    </th>
+                </tr>
+            </thead>
+            <tbody>  
+                <tr *ngFor="let item of folderList"
+                class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600"> 
+                    <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                        {{ item.name }}
+                    </th>
+                    <td class="px-6 py-4">
+                        {{ item.createdstr.replace("T", " ").replace("Z", "") }}
+                    </td> 
+                    <td class="flex items-center px-6 py-4">
+                        <div *ngIf="!(item.name.endsWith('.mp4')) && item.name != 'merged'">
+                            <a href="#" class="font-medium text-blue-600 dark:text-blue-500 hover:underline" (click)="startMerging(item.name)">开始合并</a>
+                            <a href="#" class="font-medium text-yellow-600 dark:text-yellow-500 hover:underline ms-3" (click)="queryMergingStatus(item.name)">查询处理状态</a>
+                            <a href="#" class="font-medium text-green-600 dark:text-green-500 hover:underline ms-3" (click)="getVideoFileList(item.name)">打开</a>
+                        </div>
+                        <div *ngIf="item.name == 'merged'"> 
+                            <a href="/?folder=merged" target="_blank" class="font-medium text-green-600 dark:text-green-500 hover:underline ms-3">新tab打开</a>
+                        </div>
+                    </td>
+                </tr> 
+            </tbody>
+        </table>
+    </div>
+
+
+
+    <br/>
+    <br/>
+    <br/>
+
+
+
+    <div class="relative overflow-x-auto shadow-md sm:rounded-lg">
+        <h3 class="text-3xl font-bold dark:text-white">视频原片 /{{folderName}}/</h3>
+
+        <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
+            <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+                <tr>
+                    <th scope="col" class="px-6 py-3">
+                        视频名称
+                    </th>
+                    <th scope="col" class="px-6 py-3">
+                        创建时间
+                    </th>  
+                </tr>
+            </thead>
+            <tbody> 
+
+                <tr *ngFor="let item of videoFiles"
+                class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
+                    <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                        {{ item.name }}
+                    </th>
+                    <td class="px-6 py-4">
+                        {{ item.createdstr.replace("T", " ").replace("Z", "") }}
+                    </td>  
+                </tr>
+                
+            </tbody>
+        </table>
+    </div>
+
+
+    </ng-template>
+
+
+
+
+
+ 
+
+  </div>
+</main>
+
+<router-outlet />

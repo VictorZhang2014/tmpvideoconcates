@@ -1,0 +1,7 @@
+backend-api/node_modules/
+backend-api/dist/
+
+
+frontend-ui/node_modules/
+frontend-ui/.vscode/
+
