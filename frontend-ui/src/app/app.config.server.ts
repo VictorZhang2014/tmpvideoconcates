@@ -19,6 +19,7 @@ export const config = mergeApplicationConfig(appConfig, serverConfig);
 export class ConfigService {
 
   private apiUrl = "http://172.16.10.112:3000";
+  // private apiUrl = "http://localhost:3000";
 
   constructor(private http: HttpClient) { }
 

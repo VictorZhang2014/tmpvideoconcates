@@ -22,7 +22,7 @@ export class StateManager {
       this.data[`${folder}`][`${file}`]  = value;
 
       if (value && value.status) {
-        this.isProcessing = value.status == "end" ? false : true;
+        this.isProcessing = value.status == "已结束" ? false : true;
       }
     }
 
